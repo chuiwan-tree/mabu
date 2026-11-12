@@ -88,6 +88,18 @@ function glide() {
     });
   } catch (e) { }
 }
+function resolve() {
+  // 七个音停在西上，西要往上找多。只有第七夜信写成了，才补上那个高音多。
+  try {
+    if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+    var t = actx.currentTime + 7 * 0.22 + 0.45;
+    var o = actx.createOscillator(), gn = actx.createGain();
+    o.type = 'triangle'; o.frequency.value = 523.25;
+    gn.gain.setValueAtTime(0, t); gn.gain.linearRampToValueAtTime(0.28, t + 0.03);
+    gn.gain.exponentialRampToValueAtTime(0.001, t + 2.2);
+    o.connect(gn); gn.connect(actx.destination); o.start(t); o.stop(t + 2.3);
+  } catch (e) { }
+}
 function start() {
   out.innerHTML = '';
   game = newGame();
@@ -104,6 +116,7 @@ function doit(k) {
   drawShelf();
   show(text, k ? '换' + k : '不动');
   glide();
+  if (game.over && isTarget(game.s)) resolve();
 }
 document.getElementById('stay').onclick = function () { doit(0); };
 document.getElementById('glide').onclick = glide;
